@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简历分析系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 简历分析系统</h1>
+            <p class="subtitle">智能简历解析与岗位匹配分析</p>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <h2>📤 上传简历</h2>
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" accept=".pdf,.docx" hidden>
+                    <div class="upload-placeholder">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>点击或拖拽文件到此处</p>
+                        <p class="upload-hint">支持 PDF、DOCX 格式</p>
+                    </div>
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <span id="fileName"></span>
+                        <button class="remove-file" id="removeFile">✕</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="jd-section">
+                <h2>💼 岗位需求（JD）</h2>
+                <div class="jd-inputs">
+                    <textarea id="jdText" placeholder="请输入岗位需求描述（可选）&#10;例如：&#10;职位：Python后端工程师&#10;要求：3年以上Python开发经验，熟悉Django/Flask框架，掌握MySQL、Redis等数据库技术..."></textarea>
+                    <div class="upload-area jd-upload-area" id="jdUploadArea">
+                        <input type="file" id="jdFileInput" accept=".pdf,.docx,.jpg,.jpeg,.png,.gif" hidden>
+                        <div class="upload-placeholder">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <p>上传JD文件（可选）</p>
+                            <p class="upload-hint">支持 PDF、DOCX、图片格式</p>
+                        </div>
+                        <div class="file-info" id="jdFileInfo" style="display: none;">
+                            <span id="jdFileName"></span>
+                            <button class="remove-file" id="removeJdFile">✕</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="action-section">
+                <button id="analyzeBtn" class="btn btn-primary" disabled>
+                    <span class="btn-text">开始分析</span>
+                    <span class="btn-loading" style="display: none;">
+                        <svg class="spinner" width="20" height="20" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="5"></circle>
+                        </svg>
+                        分析中...
+                    </span>
+                </button>
+            </section>
+
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="tabs">
+                    <button class="tab active" data-tab="basic">基本信息</button>
+                    <button class="tab" data-tab="background">背景信息</button>
+                    <button class="tab" data-tab="match" id="matchTab">匹配分析</button>
+                    <button class="tab" data-tab="agent">智能Agent分析</button>
+                </div>
+
+                <div class="tab-content active" id="basic">
+                    <h3>👤 基本信息</h3>
+                    <div class="info-grid" id="basicInfo"></div>
+                </div>
+
+                <div class="tab-content" id="background">
+                    <h3>🎓 教育背景</h3>
+                    <div class="info-list" id="educationInfo"></div>
+                    <h3>💼 工作经历</h3>
+                    <div class="info-list" id="workInfo"></div>
+                    <h3>🚀 项目经历</h3>
+                    <div class="info-list" id="projectInfo"></div>
+                    <h3>🔬 科研经历</h3>
+                    <div class="info-list" id="researchInfo"></div>
+                    <h3>🎯 学术经历</h3>
+                    <div class="info-list" id="academicInfo"></div>
+                    <h3>🛠️ 技能证书</h3>
+                    <div class="info-list" id="skillsInfo"></div>
+                    <h3>📝 其他信息</h3>
+                    <div class="info-list" id="otherInfo"></div>
+                </div>
+
+                <div class="tab-content" id="match">
+                    <div id="matchContent">
+                        <div class="match-score">
+                            <h3>📊 匹配度评分</h3>
+                            <div class="score-grid" id="scoreGrid"></div>
+                        </div>
+                        <div class="match-details">
+                            <div class="match-section">
+                                <h3>✅ 优势分析</h3>
+                                <div id="strengthsList"></div>
+                            </div>
+                            <div class="match-section">
+                                <h3>⚠️ 差距分析</h3>
+                                <div id="gapsList"></div>
+                            </div>
+                            <div class="match-section">
+                                <h3>💡 改进建议</h3>
+                                <div id="suggestionsList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="noJdMessage" style="display: none;">
+                        <p>请输入岗位需求（JD）以获取匹配分析结果</p>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="agent">
+                    <h3>🤖 智能Agent分析</h3>
+                    <div class="agent-container">
+                        <div class="agent-chat" id="agentChat">
+                            <div class="agent-message">
+                                <div class="agent-avatar">🤖</div>
+                                <div class="agent-content">
+                                    <p>您好！我是智能简历分析助手，有什么可以帮您的吗？</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="agent-input">
+                            <input type="text" id="agentQuery" placeholder="请输入您的问题，例如：分析这份简历的优势和劣势...">
+                            <button id="agentSendBtn" class="btn btn-secondary">发送</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2026 简历分析系统 | 智能简历解析与岗位匹配</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
